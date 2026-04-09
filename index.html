@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vibe Tracker is a local-first daily mood and productivity tracker with streaks, charts, and journal entries.">
+  <title>Vibe Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Digital Alchemy Academy</p>
+        <h1>Vibe Tracker</h1>
+      </div>
+      <div class="live-pill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>Local-first</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="hero-panel">
+        <p class="panel-kicker">Daily signal board</p>
+        <h2>Track how the work felt, not just what got done.</h2>
+        <p class="hero-copy">
+          Save one fast check-in each day, watch your streak catch fire, and review the past week without touching a backend.
+        </p>
+
+        <section class="streak-card" aria-live="polite">
+          <div class="streak-header">
+            <div>
+              <p class="panel-kicker">Momentum</p>
+              <h3 id="streak-status-label">No streak yet</h3>
+            </div>
+            <div class="ember-orb ember-tier-0" id="streak-flame" aria-hidden="true">•</div>
+          </div>
+          <div class="streak-metrics">
+            <article>
+              <span>Current</span>
+              <strong id="current-streak">0</strong>
+            </article>
+            <article>
+              <span>Longest</span>
+              <strong id="longest-streak">0</strong>
+            </article>
+            <article>
+              <span>Total entries</span>
+              <strong id="entry-total">0</strong>
+            </article>
+          </div>
+          <p class="streak-milestone" id="streak-milestone">
+            Log a few days in a row to unlock flame milestones at 3, 7, 14, and 30 days.
+          </p>
+        </section>
+      </aside>
+
+      <section class="content-panel">
+        <nav class="view-nav" aria-label="Primary">
+          <button class="nav-button active" data-view-target="checkin-view" type="button">Check-In</button>
+          <button class="nav-button" data-view-target="dashboard-view" type="button">Dashboard</button>
+          <button class="nav-button" data-view-target="history-view" type="button">History</button>
+          <button class="nav-button" data-view-target="settings-view" type="button">Settings</button>
+        </nav>
+
+        <section id="flash-message" class="flash-message" aria-live="polite"></section>
+
+        <section class="view active" id="checkin-view">
+          <div class="section-heading">
+            <div>
+              <p class="panel-kicker">Home</p>
+              <h2>Daily Check-In</h2>
+            </div>
+            <p class="section-note" id="today-label"></p>
+          </div>
+
+          <form id="checkin-form" class="checkin-form">
+            <div class="field-group">
+              <div class="field-heading">
+                <label>How is the vibe?</label>
+                <span>Select one</span>
+              </div>
+              <div class="emoji-grid" id="vibe-options" role="radiogroup" aria-label="Vibe score">
+                <button type="button" class="emoji-option" data-score="1" aria-label="Very low vibe">😤<span>1</span></button>
+                <button type="button" class="emoji-option" data-score="2" aria-label="Low vibe">😕<span>2</span></button>
+                <button type="button" class="emoji-option" data-score="3" aria-label="Neutral vibe">😐<span>3</span></button>
+                <button type="button" class="emoji-option" data-score="4" aria-label="Good vibe">😊<span>4</span></button>
+                <button type="button" class="emoji-option" data-score="5" aria-label="Excellent vibe">🔥<span>5</span></button>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-heading">
+                <label>How productive were you?</label>
+                <span>1 to 5 stars</span>
+              </div>
+              <div class="star-grid" id="productivity-options" role="radiogroup" aria-label="Productivity score">
+                <button type="button" class="star-option" data-score="1" aria-label="1 star">★</button>
+                <button type="button" class="star-option" data-score="2" aria-label="2 stars">★</button>
+                <button type="button" class="star-option" data-score="3" aria-label="3 stars">★</button>
+                <button type="button" class="star-option" data-score="4" aria-label="4 stars">★</button>
+                <button type="button" class="star-option" data-score="5" aria-label="5 stars">★</button>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-heading">
+                <label for="note-input">Journal note</label>
+                <span>Optional, max 280 characters</span>
+              </div>
+              <textarea id="note-input" name="note" maxlength="280" rows="5" placeholder="What shifted today? Capture the work, mood, or lesson."></textarea>
+              <div class="field-footer">
+                <span>Keep it short enough to scan later.</span>
+                <span id="note-counter">0 / 280</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Save today’s check-in</button>
+              <p class="section-note" id="last-save-label">No entries saved yet.</p>
+            </div>
+          </form>
+        </section>
+
+        <section class="view" id="dashboard-view">
+          <div class="section-heading">
+            <div>
+              <p class="panel-kicker">Weekly review</p>
+              <h2>Dashboard</h2>
+            </div>
+            <p class="section-note">Last 7 days only</p>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span>Average vibe</span>
+              <strong id="avg-vibe-stat">0.0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Average productivity</span>
+              <strong id="avg-productivity-stat">0.0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Entries this week</span>
+              <strong id="weekly-count-stat">0</strong>
+            </article>
+          </div>
+
+          <div class="chart-grid">
+            <article class="chart-card">
+              <div class="chart-heading">
+                <h3>Vibe trend</h3>
+                <span>1 to 5 scale</span>
+              </div>
+              <canvas id="vibe-chart" width="640" height="260" aria-label="Vibe chart"></canvas>
+            </article>
+            <article class="chart-card">
+              <div class="chart-heading">
+                <h3>Productivity trend</h3>
+                <span>1 to 5 scale</span>
+              </div>
+              <canvas id="productivity-chart" width="640" height="260" aria-label="Productivity chart"></canvas>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="history-view">
+          <div class="section-heading">
+            <div>
+              <p class="panel-kicker">Archive</p>
+              <h2>History</h2>
+            </div>
+            <p class="section-note">Newest first</p>
+          </div>
+
+          <div id="history-list" class="history-list" aria-live="polite"></div>
+        </section>
+
+        <section class="view" id="settings-view">
+          <div class="section-heading">
+            <div>
+              <p class="panel-kicker">Data controls</p>
+              <h2>Settings</h2>
+            </div>
+            <p class="section-note">Everything stays in this browser unless you export it.</p>
+          </div>
+
+          <div class="settings-grid">
+            <article class="settings-card">
+              <h3>Export your data</h3>
+              <p>Download every entry and current streak summary as JSON.</p>
+              <button id="export-button" class="secondary-button" type="button">Export JSON</button>
+            </article>
+
+            <article class="settings-card">
+              <h3>Import a backup</h3>
+              <p>Restore from a previous JSON export. Existing data will be replaced after confirmation.</p>
+              <label class="file-button" for="import-input">Choose JSON file</label>
+              <input id="import-input" type="file" accept="application/json">
+            </article>
+
+            <article class="settings-card danger-card">
+              <h3>Clear all data</h3>
+              <p>Remove every entry from localStorage. This cannot be undone unless you exported first.</p>
+              <button id="clear-button" class="danger-button" type="button">Clear everything</button>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <template id="history-item-template">
+    <article class="history-item">
+      <div class="history-item-main">
+        <div class="history-meta">
+          <span class="history-date"></span>
+          <span class="history-vibe"></span>
+          <span class="history-productivity"></span>
+        </div>
+        <p class="history-snippet"></p>
+      </div>
+      <div class="history-actions">
+        <button class="text-button history-toggle" type="button">Expand</button>
+        <button class="text-button danger-text history-delete" type="button">Delete</button>
+      </div>
+      <div class="history-note"></div>
+    </article>
+  </template>
+
+  <script src="./js/storage.js"></script>
+  <script src="./js/streaks.js"></script>
+  <script src="./js/checkin.js"></script>
+  <script src="./js/dashboard.js"></script>
+  <script src="./js/history.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
